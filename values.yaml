@@ -1,0 +1,19 @@
+kafka:
+  image: bitnami/kafka:3.5.2
+  ports:
+    - 9092
+    - 9093
+    - 9094
+  storage:
+    size: 10Gi
+
+thingsboard:
+  image: thingsboard/tb-postgres
+  ports:
+    - 8080
+    - 1883
+    - 7070
+    - 5683-5688
+  storage:
+    size: 10Gi
+  kafkaServers: kafka:9094

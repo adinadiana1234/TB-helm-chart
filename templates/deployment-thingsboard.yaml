@@ -1,0 +1,39 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: thingsboard
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: thingsboard
+  template:
+    metadata:
+      labels:
+        app: thingsboard
+    spec:
+      containers:
+        - name: thingsboard
+          image: {{ .Values.thingsboard.image }}
+          ports:
+            - containerPort: 9090
+            - containerPort: 1883
+            - containerPort: 7070
+            - containerPort: 5683
+          env:
+            - name: TB_QUEUE_TYPE
+              value: kafka
+            - name: TB_KAFKA_SERVERS
+              value: {{ .Values.thingsboard.kafkaServers }}
+          volumeMounts:
+            - name: tb-data
+              mountPath: /data
+            - name: tb-logs
+              mountPath: /var/log/thingsboard
+      volumes:
+        - name: tb-data
+          persistentVolumeClaim:
+            claimName: tb-data-pvc
+        - name: tb-logs
+          persistentVolumeClaim:
+            claimName: tb-logs-pvc
